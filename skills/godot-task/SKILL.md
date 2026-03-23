@@ -11,14 +11,35 @@ All files below are in `${CLAUDE_SKILL_DIR}/`. Load progressively — read each 
 
 | File | Purpose | When to read |
 |------|---------|--------------|
+| **Core reference** | | |
 | `quirks.md` | Known Godot gotchas and workarounds | Before writing any code |
-| `gdscript.md` | GDScript syntax reference | Before writing any code |
+| `gdscript.md` | GDScript syntax reference (types, operators, classes, patterns) | Before writing any code |
+| `godot-project.md` | Project setup, folder structure, renderer, 4.x hallucination traps | Setting up a new project |
+| `godot-nodes.md` | Node type decision tree, when to use which, @onready patterns | Choosing node types for new scenes |
+| `godot-resources.md` | Custom Resources, .tres format, save/load, FileAccess | Task involves data persistence or resources |
+| `godot-autoload.md` | Singleton patterns, GameManager, EventBus | Task involves global state or cross-scene signals |
+| **Domain reference** | | |
+| `godot-signals.md` | Signal declaration, connect, await, signal bus pattern | Task involves signals |
+| `godot-input.md` | Input actions, events, _input vs _unhandled_input | Task involves player input |
+| `godot-physics.md` | Movement, collision, physics bodies, navigation, spawning | Task involves physics or movement |
+| `godot-animation.md` | AnimationPlayer, AnimationTree, BlendSpace, facing | Task involves animation |
+| `godot-statemachine.md` | FSM patterns (node-based and enum-based) | Task involves state management |
+| `godot-ui.md` | Control nodes, anchors, themes, CanvasLayer, HUD | Targets include UI/HUD |
+| **Pipeline** | | |
 | `scene-generation.md` | Building `.tscn` files via headless GDScript builders | Targets include `.tscn` |
 | `script-generation.md` | Writing runtime `.gd` scripts for node behavior | Targets include `.gd` |
 | `coordination.md` | Ordering scene + script generation | Targets include both `.tscn` and `.gd` |
-| `test-harness.md` | Writing `test/test_{id}.gd` verification scripts | Before writing test harness |
+| **Validation & QA** | | |
+| `godot-validate.md` | LSP diagnostics (`mcp__ide__getDiagnostics`) + `--check-only` CLI | Before/after writing any code |
+| `godot-run.md` | Headless CLI flags, error taxonomy, stack trace parsing | Running or debugging the project |
+| `godot-debug.md` | print/push_error strategy, breakpoint-less debug patterns | Debugging runtime issues |
+| `godot-test.md` | GUT unit testing CLI, test structure, doubles, JUnit XML | Writing or running unit tests |
+| `test-harness.md` | Writing `test/test_{id}.gd` visual verification scripts | Before writing visual test harness |
 | `capture.md` | Screenshot/video capture with GPU detection | Before capturing screenshots |
 | `visual-qa.md` | Automated screenshot comparison against reference | `reference.png` exists and task has visual output |
+| **Export** | | |
+| `godot-export.md` | `--export-release` flags, templates, export_presets.cfg | Exporting the project |
+| **API docs** | | |
 | `doc_api/_common.md` | Index of ~128 common Godot classes (one-line each) | Need API ref; scan to find class names |
 | `doc_api/_other.md` | Index of ~732 remaining Godot classes | Need API ref; class isn't in `_common.md` |
 | `doc_api/{ClassName}.md` | Full API reference for a single Godot class | Need API ref; look up specific class |

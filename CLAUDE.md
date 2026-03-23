@@ -5,7 +5,7 @@ We develop agents and skills here. They are then used in another folder for Godo
 Source code lives at the repo root:
 - `skills/` — skill definitions (`SKILL.md`) and their tool scripts
 - `teleforge.md` — CLAUDE.md in game folder (with Telegram connection)
-- `publish.sh` — create ready-to-develop game folder
+- `godot-ai-init` — initialize a Godot project with AI skills
 
 ## Skills
 
