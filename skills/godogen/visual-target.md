@@ -5,7 +5,8 @@ Generate a reference image of what the finished game looks like. Anchors art dir
 ## CLI
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/tools/asset_gen.py image \
+SKILL_DIR="${CLAUDE_SKILL_DIR:-.claude/skills/godogen}"
+python3 ${SKILL_DIR}/tools/asset_gen.py image \
   --prompt "{prompt}" \
   --size 1K --aspect-ratio 16:9 -o reference.png
 ```

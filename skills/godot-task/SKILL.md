@@ -7,7 +7,7 @@ context: fork
 
 # Godot Task Executor
 
-All files below are in `${CLAUDE_SKILL_DIR}/`. Load progressively — read each file when its phase begins, not upfront.
+All files below are in `${CLAUDE_SKILL_DIR:-.claude/skills/godot-task}/`. Load progressively — read each file when its phase begins, not upfront.
 
 | File | Purpose | When to read |
 |------|---------|--------------|
@@ -44,7 +44,7 @@ All files below are in `${CLAUDE_SKILL_DIR}/`. Load progressively — read each 
 | `doc_api/_other.md` | Index of ~732 remaining Godot classes | Need API ref; class isn't in `_common.md` |
 | `doc_api/{ClassName}.md` | Full API reference for a single Godot class | Need API ref; look up specific class |
 
-Bootstrap doc_api: `bash ${CLAUDE_SKILL_DIR}/tools/ensure_doc_api.sh`
+Bootstrap doc_api: `SKILL_DIR="${CLAUDE_SKILL_DIR:-.claude/skills/godot-task}"; bash ${SKILL_DIR}/tools/ensure_doc_api.sh`
 
 Execute a single development task from PLAN.md:
 

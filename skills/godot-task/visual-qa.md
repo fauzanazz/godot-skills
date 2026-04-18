@@ -9,7 +9,8 @@ For scenes without meaningful motion (decoration, terrain, UI). Two images: refe
 ```bash
 mkdir -p visual-qa
 N=$(ls visual-qa/*.md 2>/dev/null | wc -l); N=$((N + 1))
-python3 ${CLAUDE_SKILL_DIR}/scripts/visual_qa.py \
+SKILL_DIR="${CLAUDE_SKILL_DIR:-.claude/skills/godot-task}"
+python3 ${SKILL_DIR}/scripts/visual_qa.py \
   --context "Goal: ...\nRequirements: ...\nVerify: ..." \
   reference.png screenshots/{task}/frame0003.png > visual-qa/${N}.md
 ```
@@ -27,7 +28,8 @@ mkdir -p visual-qa
 N=$(ls visual-qa/*.md 2>/dev/null | wc -l); N=$((N + 1))
 STEP=5  # capture_fps / 2
 FRAMES=$(ls screenshots/{task}/frame*.png | awk "NR % $STEP == 0")
-python3 ${CLAUDE_SKILL_DIR}/scripts/visual_qa.py \
+SKILL_DIR="${CLAUDE_SKILL_DIR:-.claude/skills/godot-task}"
+python3 ${SKILL_DIR}/scripts/visual_qa.py \
   --context "Goal: ...\nRequirements: ...\nVerify: ..." \
   reference.png $FRAMES > visual-qa/${N}.md
 ```

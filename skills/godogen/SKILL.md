@@ -10,7 +10,7 @@ Generate and update Godot games from natural language.
 
 ## Capabilities
 
-Read each sub-file from `${CLAUDE_SKILL_DIR}/` when you reach its pipeline stage.
+Read each sub-file from `${CLAUDE_SKILL_DIR:-.claude/skills/godogen}/` when you reach its pipeline stage.
 
 | File | Purpose |
 |------|---------|
@@ -47,7 +47,7 @@ User request
     +- Find next ready task (pending, deps all done)
     +- While a ready task exists:
     |   +- Update PLAN.md: mark task status -> in_progress
-    |   +- Skill(skill="godot-task") with task block
+    |   +- Dispatch godot-task in a fresh sub-agent with task block (Claude: Skill, OpenCode: task)
     |   +- Mark task completed in PLAN.md OR replan based on the outcome, summarize to user
     |   +- git add . && git commit -m "Task N done"
     |   +- Find next ready task
@@ -59,7 +59,9 @@ PLAN.md task `**Status:**`: one of `pending`, `in_progress`, `done`, `done (part
 
 ## Running Tasks
 
-Each task runs via `Skill(skill="godot-task")` which auto-forks into a sub-agent with clean context. Pass the full task block from PLAN.md as the skill argument:
+Each task must run in a fresh sub-agent context. Pass the full task block from PLAN.md unchanged.
+
+**Claude Code**
 
 ```
 Skill(skill="godot-task") with argument:
@@ -69,6 +71,25 @@ Skill(skill="godot-task") with argument:
   - **Goal:** ...
   - **Requirements:** ...
   - **Verify:** ...
+```
+
+**OpenCode**
+
+Use the `task` tool. Prefer `subagent_type: "godot-task"` if configured; otherwise use `subagent_type: "general"` and explicitly load the skill in the prompt.
+
+```
+task with:
+  subagent_type: general
+  description: "Task N godot-task"
+  prompt: |
+    Use skill "godot-task" and execute this task block exactly:
+
+    ## N. {Task Name}
+    - **Status:** in_progress
+    - **Targets:** scenes/main.tscn, scripts/player_controller.gd
+    - **Goal:** ...
+    - **Requirements:** ...
+    - **Verify:** ...
 ```
 
 ## Mid-Pipeline Recovery

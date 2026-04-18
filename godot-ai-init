@@ -1,10 +1,33 @@
 #!/usr/bin/env bash
 # Initialize a Godot project with AI development skills.
-# Creates .claude/skills/ and copies a CLAUDE.md.
+# Copies skills to .claude/skills and sets up agent instructions for Claude Code and/or OpenCode.
 #
-# Usage: godot-ai-init <target_dir> [claude_md]
-#   claude_md  Path to CLAUDE.md to use (default: teleforge.md)
+# Usage:
+#   godot-ai-init [--mode claude|opencode|both] [--claude-md <path>] [--agents-md <path>] <target_dir> [claude_md]
+#
+# Notes:
+# - Default mode is "claude" (backward-compatible with previous behavior).
+# - Optional second positional arg is still treated as claude_md for compatibility.
+# - --agents-md is used when mode is opencode or both.
 set -euo pipefail
+
+usage() {
+    cat <<'EOF'
+Usage:
+  godot-ai-init [--mode claude|opencode|both] [--claude-md <path>] [--agents-md <path>] <target_dir> [claude_md]
+
+Examples:
+  godot-ai-init ~/my-game
+  godot-ai-init ~/my-game local.md
+  godot-ai-init --mode opencode ~/my-game
+  godot-ai-init --mode both --claude-md ./teleforge.md --agents-md ./opencode.md ~/my-game
+
+Defaults:
+  --mode      claude
+  --claude-md <repo>/teleforge.md
+  --agents-md <repo>/opencode.md
+EOF
+}
 
 SOURCE="$0"
 while [ -L "$SOURCE" ]; do
@@ -14,27 +37,139 @@ while [ -L "$SOURCE" ]; do
 done
 REPO_ROOT="$(cd "$(dirname "$SOURCE")" && pwd)"
 
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 <target_dir> [claude_md]"
+MODE="claude"
+CLAUDE_MD=""
+AGENTS_MD=""
+POSITIONAL=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --mode)
+            [ $# -ge 2 ] || { echo "Missing value for --mode"; usage; exit 1; }
+            MODE="$2"
+            shift 2
+            ;;
+        --claude-md)
+            [ $# -ge 2 ] || { echo "Missing value for --claude-md"; usage; exit 1; }
+            CLAUDE_MD="$2"
+            shift 2
+            ;;
+        --agents-md)
+            [ $# -ge 2 ] || { echo "Missing value for --agents-md"; usage; exit 1; }
+            AGENTS_MD="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            while [ $# -gt 0 ]; do
+                POSITIONAL+=("$1")
+                shift
+            done
+            ;;
+        -*)
+            echo "Unknown option: $1"
+            usage
+            exit 1
+            ;;
+        *)
+            POSITIONAL+=("$1")
+            shift
+            ;;
+    esac
+
+done
+
+case "$MODE" in
+    claude|opencode|both) ;;
+    *)
+        echo "Invalid --mode '$MODE' (expected claude|opencode|both)"
+        usage
+        exit 1
+        ;;
+esac
+
+if [ "${#POSITIONAL[@]}" -lt 1 ] || [ "${#POSITIONAL[@]}" -gt 2 ]; then
+    usage
     exit 1
 fi
 
-TARGET="$(cd "$1" 2>/dev/null && pwd || (mkdir -p "$1" && cd "$1" && pwd))"
-CLAUDE_MD="${2:-$REPO_ROOT/teleforge.md}"
+TARGET_ARG="${POSITIONAL[0]}"
+if [ -z "$CLAUDE_MD" ] && [ "${#POSITIONAL[@]}" -ge 2 ]; then
+    CLAUDE_MD="${POSITIONAL[1]}"
+fi
+
+TARGET="$(cd "$TARGET_ARG" 2>/dev/null && pwd || (mkdir -p "$TARGET_ARG" && cd "$TARGET_ARG" && pwd))"
+CLAUDE_MD="${CLAUDE_MD:-$REPO_ROOT/teleforge.md}"
+AGENTS_MD="${AGENTS_MD:-$REPO_ROOT/opencode.md}"
+
+if [ "$MODE" = "claude" ] || [ "$MODE" = "both" ]; then
+    if [ ! -f "$CLAUDE_MD" ]; then
+        echo "CLAUDE.md template not found: $CLAUDE_MD"
+        exit 1
+    fi
+fi
+
+if [ "$MODE" = "opencode" ] || [ "$MODE" = "both" ]; then
+    if [ ! -f "$AGENTS_MD" ]; then
+        echo "AGENTS.md template not found: $AGENTS_MD"
+        exit 1
+    fi
+fi
 
 echo "Publishing to: $TARGET"
+echo "Mode: $MODE"
 
 mkdir -p "$TARGET/.claude/skills"
 rsync -a --delete --exclude='doc_source/' --exclude='__pycache__/' \
     "$REPO_ROOT/skills/" "$TARGET/.claude/skills/"
+echo "Synced skills -> .claude/skills"
 
-cp "$CLAUDE_MD" "$TARGET/CLAUDE.md"
-echo "Created CLAUDE.md (from $CLAUDE_MD)"
+if [ "$MODE" = "claude" ] || [ "$MODE" = "both" ]; then
+    cp "$CLAUDE_MD" "$TARGET/CLAUDE.md"
+    echo "Created CLAUDE.md (from $CLAUDE_MD)"
+fi
+
+if [ "$MODE" = "opencode" ] || [ "$MODE" = "both" ]; then
+    cp "$AGENTS_MD" "$TARGET/AGENTS.md"
+    echo "Created AGENTS.md (from $AGENTS_MD)"
+
+    mkdir -p "$TARGET/.opencode"
+    cat > "$TARGET/.opencode/opencode.json" << 'OPENCODE_EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "../.claude/skills"
+    ]
+  },
+  "command": {
+    "godogen": {
+      "description": "Generate or update this game from a natural language description",
+      "template": "Use skill \"godogen\" to generate or update the game. User request:\n\n$ARGUMENTS"
+    }
+  },
+  "agent": {
+    "godot-task": {
+      "description": "Execute one Godot task by loading the godot-task skill",
+      "mode": "subagent",
+      "prompt": "Use skill \"godot-task\" and execute the provided task block exactly. Follow the skill workflow and required completion report format."
+    }
+  }
+}
+OPENCODE_EOF
+    echo "Created .opencode/opencode.json (includes /godogen command + godot-task subagent)"
+fi
 
 if [ ! -f "$TARGET/.gitignore" ]; then
     cat > "$TARGET/.gitignore" << 'GI_EOF'
 .claude
 CLAUDE.md
+.opencode
+AGENTS.md
 assets
 screenshots
 .godot

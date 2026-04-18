@@ -120,7 +120,7 @@ This document-based communication is deliberate. The godot-task skill runs in a 
 
 ### Deployment Model
 
-The `publish.sh` script copies the `skills/` directory into a target game directory under `.claude/skills/`, drops in a `CLAUDE.md` with session instructions (defaulting to `teleforge.md`), and initializes a git repo. The game project is then self-contained: anyone with Claude Code can open the folder and run `/godogen` to build or iterate on the game.
+The `godot-ai-init` script copies the `skills/` directory into a target game directory under `.claude/skills/`, generates runtime instruction files (`CLAUDE.md` for Claude mode, `AGENTS.md` + `.opencode/opencode.json` for OpenCode mode), and initializes a git repo. The game project is then self-contained: users can open the folder in Claude Code or OpenCode and run `/godogen` to build or iterate on the game.
 
 For remote operation, `teleforge.md` configures the system as a non-interactive background process connected to Telegram. The user sends a message, walks away, and receives screenshots, QA verdicts, and a final gameplay video as the game takes shape — a game studio in a chat window.
 
