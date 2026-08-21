@@ -7,7 +7,7 @@ This repository is not a published game repo. It is the source that `publish.sh`
 - `prompts/runtime.md` — the runtime manifest text
 - `asset-gen/` — the asset-generation skill (CLI tools + docs), the one skill every published repo carries
 - `engines/godot.md` — the engine guide (stack, project sketch, capture recipe, silent-failure traps)
-- `publish.sh` — renders a runtime repo with `--agent {claude,codex,opencode}`
+- `publish.sh` — renders a runtime repo with `--agent {claude,codex,opencode,omp}`
 - `scripts/` — render helpers: `render_dir.py` (token substitution), `generate_codex_metadata.py` (Codex `openai.yaml`)
 
 ## Editing Rules

@@ -1,6 +1,6 @@
 # Godot Skills
 
-Autonomous Godot 4 game development with Claude Code, Codex, and OpenCode.
+Autonomous Godot 4 game development with Claude Code, Codex, OpenCode, and OMP.
 
 Describe a game. The agent builds it, generates assets, runs the engine, and proves the result — as a project you run and watch, or as a recorded video when you're not there. It reads the situation and decides which, in the run.
 
@@ -17,7 +17,7 @@ A published repo is intentionally thin: a runtime manifest, a one-page engine gu
 - `asset-gen/` — the asset-generation skill
 - [publish.sh](publish.sh) — renders the runtime layout for the chosen host agent
 
-Host agent (Claude vs Codex vs OpenCode) is a publish-time render choice, not a separate source tree.
+Host agent (Claude vs Codex vs OpenCode vs OMP) is a publish-time render choice, not a separate source tree.
 
 ## What the agent does
 
@@ -35,7 +35,7 @@ Host agent (Claude vs Codex vs OpenCode) is a publish-time render choice, not a 
 - Python 3.10+ with pip
 - System packages and API keys from [setup.md](setup.md): `vulkan-tools`, `xvfb`, `ffmpeg`, `imagemagick`, plus `GOOGLE_API_KEY` / `XAI_API_KEY` / `TRIPO3D_API_KEY`
 - Tested on macOS and Ubuntu/Debian
-- Claude Code, Codex, or OpenCode
+- Claude Code, Codex, OpenCode, or OMP
 
 ### Publish a game repo
 
@@ -43,6 +43,7 @@ Host agent (Claude vs Codex vs OpenCode) is a publish-time render choice, not a 
 ./publish.sh --agent claude   --out ~/my-game    # CLAUDE.md + .claude/skills/
 ./publish.sh --agent codex    --out ~/my-game    # AGENTS.md + .agents/skills/
 ./publish.sh --agent opencode --out ~/my-game    # AGENTS.md + .opencode/skills/
+./publish.sh --agent omp      --out ~/my-game    # AGENTS.md + .omp/skills/
 ```
 
 Pass `--force` to wipe existing contents at the target before re-publishing.
@@ -54,7 +55,7 @@ Then open the game repo in your agent and describe the game. [Prompts](docs/demo
 A full generation run can take hours, so it's convenient to offload it to a server — ideally a GPU instance, since engine rendering and video capture are much faster with hardware acceleration.
 
 - Keep the session alive across SSH drops with `tmux` or `screen`.
-- Enable remote control so you can check in and steer the run from any device — Claude Code, Codex, and OpenCode all have remote-control interfaces.
+- Enable remote control so you can check in and steer the run from any device — Claude Code, Codex, OpenCode, and OMP all have remote-control interfaces.
 
 ## Changelog
 

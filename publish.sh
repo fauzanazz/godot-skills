@@ -2,8 +2,8 @@
 # Publish the Godot runtime files into a target game repo.
 #
 # Usage:
-#   ./publish.sh --agent claude|codex|opencode --out <dir> [--force]
-#   ./publish.sh --agent claude|codex|opencode <dir> [--force]
+#   ./publish.sh --agent claude|codex|opencode|omp --out <dir> [--force]
+#   ./publish.sh --agent claude|codex|opencode|omp <dir> [--force]
 #
 # A published repo carries only docs: the runtime manifest (CLAUDE.md / AGENTS.md),
 # the engine guide (godot.md), and the asset-gen skill. The agent scaffolds the
@@ -58,7 +58,13 @@ case "$AGENT" in
         AGENT_NAME="OpenCode"
         ASSET_SKILL_COMMAND="the \"asset-gen\" skill"
         ;;
-    *) echo "error: --agent must be claude, codex, or opencode" >&2; usage; exit 1 ;;
+    omp)
+        MANIFEST="AGENTS.md"
+        SKILLS_DIR_REL=".omp/skills"
+        AGENT_NAME="OMP"
+        ASSET_SKILL_COMMAND="skill://asset-gen"
+        ;;
+    *) echo "error: --agent must be claude, codex, opencode, or omp" >&2; usage; exit 1 ;;
 esac
 
 ENGINE_GUIDE_FILE="godot.md"
@@ -122,6 +128,7 @@ if [ ! -f "$TARGET/.gitignore" ]; then
             claude)   printf '.claude\nCLAUDE.md\n' ;;
             codex)    printf '.agents\nAGENTS.md\n.codex\n' ;;
             opencode) printf '.opencode\nAGENTS.md\n' ;;
+            omp)      printf '.omp\nAGENTS.md\n' ;;
         esac
         printf '%s\n' "$ENGINE_GUIDE_FILE"
         printf 'assets\nscreenshots\n.godot\n*.import\nbin/\nobj/\n'
