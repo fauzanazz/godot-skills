@@ -1,0 +1,23 @@
+@startuml
+title Godot Skills — Orkestrasi Run Agent
+start
+:publish.sh renders repo game (--agent claude, codex, opencode, omp); <<#48bb78>>
+:Auto-discovery: AGENTS.md + godot.md + asset-gen skill; <<#48bb78>>
+if (Framing tugas?) then (terbuka, eksploratif)
+  :Checkpoint: taste / scope / cost; <<#f59e0b>>
+else (brief final)
+  :Eksekusi otonom tanpa blocking;
+endif
+repeat
+  :Scaffold + build + generate aset;
+  if (Aset berbayar?) then (ya)
+    :Konfirmasi spend dengan user;
+  else (tidak)
+  endif
+  :Jalankan engine;
+  :Validasi dari game berjalan; <<#4299e1>>
+repeat while (Ada defect / silent trap?) is (ya) not (tidak)
+:Video proof 15-20s + watch-back;
+:README.md — status durable (lanjut lintas sesi);
+stop
+@enduml
