@@ -1,10 +1,10 @@
-# Contributing to Godogen
+# Contributing to Godot Skills
 
 ## Philosophy
 
-Godogen is an autonomous pipeline. The goal is to generate the best possible games with as little human guidance as possible. Every piece of this repo exists to serve that goal.
+This repo publishes a thin runtime — a manifest, an engine guide, and an asset skill — that a coding agent builds games inside. The goal is to generate the best possible games with as little human guidance as possible. Every piece of this repo exists to serve that goal.
 
-We keep things lean and focused. We don't add features just to have them — we'd rather have one clear, well-built tool than several mediocre ones. Less surface area means easier maintenance and better agent efficiency. If a new feature doesn't make the pipeline meaningfully better at producing games autonomously, it doesn't belong here.
+The default answer to "should we document this?" is no. The agent is a capable model, `dotnet build` reports anything the compiler can see, and the deliverable surfaces the rest — so the guides carry only silent failures and exact tooling invocations. Guidance that merely restates what the model already knows costs context on every run and makes the output worse, not better. Deletions are as welcome as additions.
 
 ## How to Contribute
 
@@ -40,7 +40,7 @@ Once approved, open a PR that references the issue. Keep it focused on what was 
 - Improve output quality in a measurable way (better scenes, fewer broken scripts, more reliable asset generation).
 - Reduce token usage or API costs without sacrificing quality.
 - Improve reliability of the pipeline (fewer crashes, better error recovery).
-- Improve or correct the Godot, Bevy, or asset-generation reference material.
+- Add a silent-failure trap — something that builds clean and still breaks at runtime — that cost you a real debugging session.
 
 **We'll likely close contributions that:**
 
@@ -54,7 +54,7 @@ Once approved, open a PR that references the issue. Keep it focused on what was 
 
 - Match the existing style and conventions in the repo.
 - Keep changes minimal and surgical. Small, focused PRs are easier to review and merge.
-- If your change touches a skill, test it by running the pipeline end-to-end and include the output or a summary of results.
+- If your change touches the engine guide or the asset skill, publish a game repo and run it end-to-end; include the output or a summary of results.
 
 ## PRs Without an Approved Issue Will Be Closed
 

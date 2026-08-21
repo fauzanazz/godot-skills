@@ -1,41 +1,21 @@
 # Changelog
 
-**2026-07-02 — Docs-only runtime**
-- Replaced the multi-stage skill pipeline with a thin runtime: a single engine-agnostic manifest (`prompts/runtime.md`), a one-page per-engine guide, and the cross-engine `asset-gen` skill. The model plans, scaffolds, and decomposes the work itself.
-- One runtime manifest covers delivery. The agent reads how the task is framed in-run: an open-ended direction gets the live game early and checkpoints at taste/scope/cost decisions; a finished brief runs on reasonable calls and closes with a 15–20s proof recording, watched back before done. Run/show/capture mechanics live in the engine guides and serve both paths.
-- Dropped the planner/decomposer/architecture/scene/scaffold/quirks/capture skill docs, the Vite scaffold, the `godot-api` / `bevy-help` / `babylon-help` lookup skills, and all hooks. The engine-specific traps and capture recipes that survive a compile but fail at runtime moved into the engine guide.
-- Trimmed asset docs to generation only; `asset-gen` is now the sole published skill.
-- Reorganized the source tree: engine-agnostic runtime text lives in `prompts/runtime.md`, and the asset skill lives at top-level `asset-gen/`.
-- Continues the 2026-04-26 "dropped Gemini verification" trajectory — removing guidance the current model no longer needs.
+**2026-08-21 — Docs-only runtime**
+- Replaced the two-skill pipeline with a thin runtime: a single manifest (`prompts/runtime.md`), a one-page engine guide (`engines/godot.md`), and the `asset-gen` skill. The model plans, scaffolds, and decomposes the work itself.
+- Dropped the orchestrator, decomposer, asset planner, visual-target, scaffold, coordination, scene/script-generation, test-harness, and visual-QA docs, along with the 15 `godot-*.md` domain references and the 862-file `doc_api/` tree and its converters. The traps that survive a build but fail at runtime moved into the engine guide; everything derivable was deleted.
+- Migrated generated code from GDScript to C# / .NET 9, following upstream. `dotnet build` type-checks the whole project, so the language reference and the type-inference trap list are gone — the compiler reports them. What remains in the engine guide is the silent-failure set: serialization, shadows, physics shapes, culling, and the exact run/capture invocations.
+- Adopted upstream's `asset-gen` skill: Grok video animated sprites with loop detection, BiRefNet multi-signal matting with QA preview, Tripo3D v3.1 with biped rig/retarget and resume-without-double-charge.
+- `publish.sh` renders per host agent — `--agent claude|codex|opencode` — replacing `godot-ai-init`. Codex support comes from upstream; OpenCode support is this fork's.
+- Dropped the Teleforge `CLAUDE.md` template and the Telegram hooks. Claude Code, Codex, and OpenCode all ship their own remote-control interfaces.
+- One runtime manifest covers delivery: the agent reads how the task is framed in-run — an open-ended direction gets the game early with checkpoints at taste/scope/cost decisions; a finished brief runs on reasonable calls and closes with a 15–20s proof recording, watched back before done.
+- Rewrote the run/capture recipes against a real macOS run (Godot 4.7.2 mono, Metal): a bare `ln -s` into `Godot_mono.app` hangs `--headless` with no error (use a wrapper), `--write-movie` into a missing directory reports success and writes nothing, `--quit-after` counts movie frames while `_PhysicsProcess` runs at 60 Hz, nodes added in `_Initialize()` aren't in the tree yet, and `DirectionalLight3D.ShadowEnabled` defaults to false.
 
-**2026-05-18 — Babylon.js support**
-- Added Babylon.js as a first-class engine alongside Godot and Bevy
-- Disposable TypeScript/Vite scaffold with scene-level hot reload through a custom Vite plugin (`godogen:scene-change`); engine and canvas persist across edits
-- Browser capture through Playwright + Chrome/Chromium; hardware WebGL2 preferred, software-renderer fallback warns prominently but still produces media
-- `babylon-help` skill uses installed npm package types as the primary local reference
-- `publish.sh` extended to `--engine babylon`
+**2026-04-22 — OpenCode support**
+- Added OpenCode as a host agent alongside Claude Code: `AGENTS.md` manifest plus `.opencode/opencode.json` for skill discovery
+- Compatibility fallbacks for subagent invocation
 
-**2026-04-26 — Bevy support**
-- Added Bevy as a first-class engine alongside Godot
-- Replaced the four Claude/Codex source trees with `shared/`, `godot/`, and `bevy/`
-- Added one root `publish.sh` switcher: `--engine godot|bevy` × `--agent claude|codex`
-- Dropped Gemini verification — Opus 4.7 / GPT 5.5 self-verify from captured frames; external pass added no signal; the stop hook pushes the latest proof video to Telegram
+**2026-04-20 — Domain-specific references**
+- Split the monolithic GDScript reference into 15 domain files (nodes, physics, signals, input, UI, animation, state machines, resources, autoload, project, run, validate, debug, test, export)
 
-**2026-04-14 — Codex support**
-- Added a parallel Codex source tree alongside the existing Claude Code one
-- Each variant publishes to its own runtime layout (`.claude/skills/` vs `.agents/skills/`)
-
-**2026-04-06 — C# migration**
-- All skills and generated code migrated from GDScript to C# / .NET 9 ([comparison](docs/gdscript-vs-csharp.md))
-- `dotnet build` replaces per-file validation loops
-
-**2026-04-03 — Single-context architecture**
-- Orchestrator and task execution merged into one main pipeline
-- Added Godot API lookup and visual QA support flows
-
-**2026-03-25 — xAI Grok video**
-- Added Grok video generation for animated sprite workflows
-- Background removal rewritten with BiRefNet multi-signal matting
-
-**2026-03-09 — Initial release**
-- Initial Godogen release with image generation, 3D conversion, screenshot QA, and video capture
+**2026-03-09 — Fork point**
+- Forked from [htdt/godogen](https://github.com/htdt/godogen) at the initial Godot/GDScript release
