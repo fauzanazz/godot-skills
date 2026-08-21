@@ -10,10 +10,10 @@ Fork of [htdt/godogen](https://github.com/htdt/godogen), narrowed to Godot and e
 
 ## Source layout
 
-A published repo is intentionally thin: a runtime manifest, a one-page engine guide, and the asset-generation skill. The agent recreates everything else (project scaffold, scene builders, capture tooling) from the guide.
+A published repo is intentionally thin: a runtime manifest, a one-page engine guide, the asset-generation skill, and the `Bridge.gd` TCP command bridge. The agent recreates everything else (project scaffold, scene builders, capture tooling) from the guide.
 
 - `prompts/runtime.md` — the runtime manifest
-- `engines/godot.md` — the engine guide
+- `engines/` — `godot.md` (engine guide) + `Bridge.gd` (the shipped TCP command bridge)
 - `asset-gen/` — the asset-generation skill
 - [publish.sh](publish.sh) — renders the runtime layout for the chosen host agent
 
